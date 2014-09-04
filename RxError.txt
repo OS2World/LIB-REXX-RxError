@@ -1,0 +1,51 @@
+This REXX extension DLL allows one to toggle the hard error state of OS/2.
+
+By disabling hard errors, one can avoid interruptions by OS/2 when a 
+hardware device is in a not ready state, and other hard error pop-ups.
+
+For example, if you attempt to change to the root directory of a CD drive 
+that has a music CD in it, or no CD at all, OS/2 normally pops up a box 
+saying that the drive isn't ready, and offers you a chance to retry, return 
+an error code, or end the current program.  This can be annoying, and it 
+can also be fatal for automated tasks.
+
+With hard errors disabled, this pop-up will not occur, and the directory() 
+function will merely return a null string, indicating failure.  The same is 
+true with invalid drives.
+
+To use this function, copy RxError.dll to a directory in your libpath, and 
+put the following line in your REXX program before calling the RxError 
+function:
+
+call RxFuncAdd 'RxError','RxError','RxError'
+
+You may then call RxError with a single argument, which must be one of the 
+following (case insensitive):
+
+disableharderrors \
+disableharderr      \
+disablehard           \  Disable hard errors.
+dhard                 /
+dh                  /
+0                 /
+
+enableharderrors \
+enableharderr      \
+enablehard           \  Enable hard errors.
+ehard                /
+eh                 /
+1                /
+
+
+If you provide an invalid parameter, a syntax error will be triggered.  The 
+only return value is 0, since there is no possible failure once the syntax 
+is correct.
+
+See example.cmd for a demonstration.
+
+The program works by simply calling the DosError() API with the appropriate 
+parameter.  While disabling hard errors implicitly enables exception 
+pop-ups, RxError is not intended to toggle exception states, since REXX has 
+no facility to register and exception handler.
+
+The source and module definition file are in the source.zip archive.
